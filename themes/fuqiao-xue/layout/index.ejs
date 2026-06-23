@@ -1,0 +1,20 @@
+<% const isEnglishPost = post => !post.lang || post.lang === 'en'; %>
+<% const latestPosts = site.posts.filter(post => isEnglishPost(post) && post.featured).sort('date', -1).limit(3); %>
+
+<section class="hero section" aria-labelledby="home-title">
+  <div class="hero__body">
+    <!-- <p class="hero__name">Fuqiao Xue</p> -->
+    <h1 id="home-title">Web standards and internationalization.</h1>
+    <p class="hero__summary">Leading the W3C Internationalization Activity; writing about i18n, the Web platform, and AI.</p>
+  </div>
+</section>
+
+<section class="section">
+  <div class="panel">
+    <div class="section-heading">
+      <h2>Latest Writing</h2>
+      <a class="text-link" href="<%- url_for('/writing/') %>">All writing</a>
+    </div>
+    <%- partial('partial/post-list', { posts: latestPosts }) %>
+  </div>
+</section>

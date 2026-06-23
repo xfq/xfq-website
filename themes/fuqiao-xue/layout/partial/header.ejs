@@ -1,0 +1,19 @@
+<% const currentPath = (page.path || '').replace(/\/?index\.html$/, function(match) { return match === 'index.html' ? '' : '/'; }); %>
+<% const navItems = [
+  { label: 'Writing', href: '/writing/' },
+  { label: 'About', href: '/about/' },
+  { label: '中文', href: '/zh/' }
+]; %>
+<header class="site-header">
+  <nav class="site-nav" aria-label="Primary">
+    <a class="site-title" href="<%- url_for('/') %>">Fuqiao Xue</a>
+    <ul class="site-nav__links" role="list">
+      <% navItems.forEach(function(item) { %>
+        <% const itemPath = item.href.replace(/^\//, ''); %>
+        <% const isSectionActive = currentPath.startsWith(itemPath); %>
+        <% const isExactCurrent = currentPath === itemPath; %>
+        <li><a href="<%- url_for(item.href) %>" class="<%= isSectionActive ? 'is-active' : '' %>"<%- isExactCurrent ? ' aria-current="page"' : '' %>><%= item.label %></a></li>
+      <% }) %>
+    </ul>
+  </nav>
+</header>

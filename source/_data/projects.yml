@@ -1,0 +1,18 @@
+- name: W3C Internationalization Activity
+  description: Coordination and technical work for internationalization across W3C standards and the Web platform.
+  url: https://www.w3.org/International/
+  role: Lead
+  tags:
+    - W3C
+    - i18n
+    - web-standards
+  featured: true
+
+- name: Language Enablement
+  description: Work that documents language and writing-system needs so Web technologies can support users worldwide.
+  url: https://www.w3.org/International/i18n-drafts/nav/languagedev
+  role: Contributor
+  tags:
+    - language-enablement
+    - writing-systems
+  featured: true

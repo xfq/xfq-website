@@ -1,0 +1,13 @@
+<% const isEnglishPost = post => !post.lang || post.lang === 'en'; %>
+<% const writingPosts = site.posts.filter(isEnglishPost).sort('date', -1); %>
+
+<section class="section page-header">
+  <p class="eyebrow">Writing</p>
+  <h1>Articles and notes</h1>
+  <p>Writing by Fuqiao Xue on internationalization, the Web platform, and AI.</p>
+</section>
+
+<section class="section panel" aria-labelledby="writing-list-heading">
+  <h2 id="writing-list-heading" class="visually-hidden">All writing</h2>
+  <%- partial('partial/post-list', { posts: writingPosts }) %>
+</section>

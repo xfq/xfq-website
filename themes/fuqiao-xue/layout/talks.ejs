@@ -1,0 +1,10 @@
+<section class="section page-header">
+  <p class="eyebrow">Talks</p>
+  <h1>Talks and presentations</h1>
+  <p>Public talks, presentations, and related materials.</p>
+</section>
+
+<section class="section panel" aria-labelledby="talk-list-heading">
+  <h2 id="talk-list-heading" class="visually-hidden">Talk list</h2>
+  <%- partial('partial/talk-list', { talks: site.data.talks || [] }) %>
+</section>

@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang="<%= page.lang || config.language || 'en' %>">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="color-scheme" content="dark">
+    <title><% if (page.title) { %><%= page.title %> · <% } %><%= config.title %></title>
+    <meta name="description" content="<%= page.summary || config.description %>">
+    <%- css('css/style') %>
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <%- partial('partial/header') %>
+    <main id="main" class="site-main" tabindex="-1">
+      <%- body %>
+    </main>
+    <%- partial('partial/footer') %>
+  </body>
+</html>

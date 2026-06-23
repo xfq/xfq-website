@@ -1,0 +1,23 @@
+<% if (posts && posts.length) { %>
+  <ol class="post-list" role="list">
+    <% posts.each(function(post) { %>
+      <li class="post-list__item">
+        <a class="post-list__title" href="<%- url_for(post.path) %>"><%= post.title %></a>
+        <div class="post-list__meta">
+          <time datetime="<%= date(post.date, 'YYYY-MM-DD') %>"><%= date(post.date, 'YYYY-MM-DD') %></time>
+          <% if (post.lang) { %><span><%= post.lang %></span><% } %>
+        </div>
+        <% if (post.summary) { %><p><%= post.summary %></p><% } %>
+        <% if (post.tags && post.tags.length) { %>
+          <ul class="tag-list" role="list" aria-label="Tags for <%= post.title %>">
+            <% post.tags.each(function(tag) { %>
+              <li><span><%= tag.name %></span></li>
+            <% }) %>
+          </ul>
+        <% } %>
+      </li>
+    <% }) %>
+  </ol>
+<% } else { %>
+  <p class="empty-state">No writing is listed here yet.</p>
+<% } %>

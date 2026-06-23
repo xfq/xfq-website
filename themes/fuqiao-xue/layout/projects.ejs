@@ -1,0 +1,10 @@
+<section class="section page-header">
+  <p class="eyebrow">Projects</p>
+  <h1>Selected work and projects</h1>
+  <p>Standards, internationalization, language enablement, and related technical work.</p>
+</section>
+
+<section class="section panel" aria-labelledby="project-list-heading">
+  <h2 id="project-list-heading" class="visually-hidden">Project list</h2>
+  <%- partial('partial/project-list', { projects: site.data.projects || [] }) %>
+</section>

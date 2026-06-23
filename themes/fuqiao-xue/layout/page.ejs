@@ -1,0 +1,9 @@
+<article class="section prose">
+  <header class="page-header">
+    <h1><%= page.title %></h1>
+    <% if (page.summary) { %><p><%= page.summary %></p><% } %>
+  </header>
+  <div class="prose__body">
+    <%- page.content %>
+  </div>
+</article>

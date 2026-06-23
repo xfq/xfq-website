@@ -1,0 +1,24 @@
+<% if (projects && projects.length) { %>
+  <ol class="item-list" role="list">
+    <% projects.forEach(function(project) { %>
+      <li class="item-list__item">
+        <h3>
+          <% if (project.url) { %>
+            <a href="<%= project.url %>"><%= project.name %></a>
+          <% } else { %>
+            <%= project.name %>
+          <% } %>
+        </h3>
+        <% if (project.role) { %><p class="item-list__meta"><%= project.role %></p><% } %>
+        <p><%= project.description %></p>
+        <% if (project.tags && project.tags.length) { %>
+          <ul class="tag-list" role="list" aria-label="Project tags">
+            <% project.tags.forEach(function(tag) { %><li><span><%= tag %></span></li><% }) %>
+          </ul>
+        <% } %>
+      </li>
+    <% }) %>
+  </ol>
+<% } else { %>
+  <p class="empty-state">No projects are listed on this site yet.</p>
+<% } %>
