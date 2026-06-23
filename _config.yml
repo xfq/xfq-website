@@ -9,7 +9,7 @@ keywords:
 author: Fuqiao Xue
 language: en
 timezone: Asia/Shanghai
-url: http://localhost:4000
+url: https://xuefuqiao.com
 root: /
 permalink: writing/:year/:month/:day/:title/
 permalink_defaults:

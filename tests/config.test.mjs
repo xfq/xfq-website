@@ -39,7 +39,7 @@ test("Hexo baseline files are configured for Fuqiao Xue", () => {
   assert.match(config, /^language: en$/m);
   assert.match(config, /^permalink: writing\/:year\/:month\/:day\/:title\/$/m);
   assert.match(config, /^timezone: Asia\/Shanghai$/m);
-  assert.match(config, /^url: http:\/\/localhost:4000$/m);
+  assert.match(config, /^url: https:\/\/xuefuqiao\.com$/m);
   assert.match(config, /^root: \/$/m);
   assert.match(config, /^source_dir: source$/m);
   assert.match(config, /^public_dir: public$/m);
