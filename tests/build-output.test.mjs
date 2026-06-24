@@ -54,10 +54,42 @@ test("generated routes include the primary site sections", () => {
     "public/projects/index.html",
     "public/talks/index.html",
     "public/about/index.html",
-    "public/zh/index.html"
+    "public/zh/index.html",
+    "public/robots.txt",
+    "public/sitemap.xml"
   ]) {
     assert.equal(existsSync(path), true, `${path} should exist`);
   }
+});
+
+test("robots.txt advertises the generated sitemap", () => {
+  const robots = html("public/robots.txt");
+
+  assert.match(robots, /^User-agent: \*$/m);
+  assert.match(robots, /^Allow: \/$/m);
+  assert.match(robots, /^Sitemap: https:\/\/xuefuqiao\.com\/sitemap\.xml$/m);
+});
+
+test("sitemap lists public pages and excludes unpublished posts", () => {
+  const sitemap = html("public/sitemap.xml");
+
+  assert.match(sitemap, /^<\?xml version="1\.0" encoding="UTF-8"\?>/);
+  assert.match(sitemap, /<urlset xmlns="http:\/\/www\.sitemaps\.org\/schemas\/sitemap\/0\.9">/);
+
+  for (const url of [
+    "https://xuefuqiao.com/",
+    "https://xuefuqiao.com/writing/",
+    "https://xuefuqiao.com/projects/",
+    "https://xuefuqiao.com/talks/",
+    "https://xuefuqiao.com/about/",
+    "https://xuefuqiao.com/zh/",
+    "https://xuefuqiao.com/writing/2026/06/23/ask-w3c-i18n/"
+  ]) {
+    assert.equal(sitemap.includes(`<loc>${url}</loc>`), true, `${url} should be listed`);
+  }
+
+  assert.doesNotMatch(sitemap, /i18n-notes/);
+  assert.doesNotMatch(sitemap, /working-with-multilingual-technical-knowledge/);
 });
 
 test("homepage renders the approved information architecture", () => {
