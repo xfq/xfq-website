@@ -46,14 +46,14 @@ test("placeholder posts are intentionally unpublished", () => {
   assert.match(second, /- knowledge-systems/);
 });
 
-test("post filenames use slug-only names for permalink generation", () => {
+test("post filenames use slug-only names for article URLs", () => {
   for (const path of postFiles()) {
     const filename = basename(path);
 
     assert.doesNotMatch(
       filename,
       /^\d{4}-\d{2}-\d{2}-/,
-      `${filename} should not duplicate the permalink date`
+      `${filename} should not include a date prefix`
     );
     assert.match(
       filename,

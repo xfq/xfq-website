@@ -11,7 +11,7 @@ language: en
 timezone: Asia/Shanghai
 url: https://xuefuqiao.com
 root: /
-permalink: writing/:year/:month/:day/:title/
+permalink: writing/:title/
 permalink_defaults:
 pretty_urls:
   trailing_index: true

@@ -7,8 +7,8 @@ import { before, test } from "node:test";
 const html = (path) => readFileSync(path, "utf8");
 
 const postPaths = [
-  "public/writing/2026/06/18/i18n-notes/index.html",
-  "public/writing/2026/06/18/working-with-multilingual-technical-knowledge/index.html"
+  "public/writing/i18n-notes/index.html",
+  "public/writing/working-with-multilingual-technical-knowledge/index.html"
 ];
 
 const htmlFiles = (dir) => {
@@ -83,10 +83,12 @@ test("sitemap lists public pages and excludes unpublished posts", () => {
     "https://xuefuqiao.com/talks/",
     "https://xuefuqiao.com/about/",
     "https://xuefuqiao.com/zh/",
-    "https://xuefuqiao.com/writing/2026/06/23/ask-w3c-i18n/"
+    "https://xuefuqiao.com/writing/ask-w3c-i18n/"
   ]) {
     assert.equal(sitemap.includes(`<loc>${url}</loc>`), true, `${url} should be listed`);
   }
+
+  assert.doesNotMatch(sitemap, /\/writing\/\d{4}\/\d{2}\/\d{2}\//);
 
   assert.doesNotMatch(sitemap, /i18n-notes/);
   assert.doesNotMatch(sitemap, /working-with-multilingual-technical-knowledge/);
@@ -146,6 +148,21 @@ test("generated pages include favicon metadata and assets", () => {
   );
 });
 
+test("generated HTML pages expose canonical URLs", () => {
+  for (const file of htmlFiles("public")) {
+    const content = html(file);
+    const canonicalLinks = [...content.matchAll(/<link\b(?=[^>]*\brel="canonical")(?=[^>]*\bhref="([^"]+)")[^>]*>/g)];
+    const relativePath = file.replace(/^public\//, "");
+    const expectedPath = relativePath === "index.html"
+      ? ""
+      : relativePath.replace(/(?:\/)?index\.html$/, "/").replace(/\.html$/, ".html");
+    const expectedUrl = `https://xuefuqiao.com/${expectedPath}`;
+
+    assert.equal(canonicalLinks.length, 1, `${file} should have exactly one canonical URL`);
+    assert.equal(canonicalLinks[0][1], expectedUrl, `${file} should canonicalize to ${expectedUrl}`);
+  }
+});
+
 test("secondary pages render expected content and empty states", () => {
   const writingIndex = html("public/writing/index.html");
   assert.match(writingIndex, /Ask W3C i18n/);
@@ -180,8 +197,13 @@ test("styled list markup preserves list semantics", () => {
 });
 
 test("the published post generates a public detail page", () => {
-  const path = "public/writing/2026/06/23/ask-w3c-i18n/index.html";
+  const path = "public/writing/ask-w3c-i18n/index.html";
   assert.equal(existsSync(path), true, `${path} should exist`);
+  assert.equal(
+    existsSync("public/writing/2026/06/23/ask-w3c-i18n/index.html"),
+    false,
+    "dated article URLs should not be generated"
+  );
 
   const post = html(path);
   assert.match(post, /<h1>Ask W3C i18n<\/h1>/);
