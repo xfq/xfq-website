@@ -75,6 +75,13 @@ test("homepage renders the approved information architecture", () => {
   assert.doesNotMatch(home, /href="\/talks\/"/);
 });
 
+test("footer renders public profile links", () => {
+  const home = html("public/index.html");
+
+  assert.match(home, /<footer class="site-footer">[\s\S]*<a\b(?=[^>]*href="https:\/\/github\.com\/xfq")[^>]*>GitHub<\/a>[\s\S]*<\/footer>/);
+  assert.match(home, /<footer class="site-footer">[\s\S]*<a\b(?=[^>]*href="https:\/\/www\.linkedin\.com\/in\/xfq\/")[^>]*>LinkedIn<\/a>[\s\S]*<\/footer>/);
+});
+
 test("generated pages include favicon metadata and assets", () => {
   const home = html("public/index.html");
 
