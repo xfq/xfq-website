@@ -1,0 +1,102 @@
+<%
+const siteBaseUrl = (config.url || '').replace(/\/$/, '');
+const siteUrl = `${siteBaseUrl}/`;
+const personId = `${siteBaseUrl}/#person`;
+const websiteId = `${siteBaseUrl}/#website`;
+const webpageId = `${canonicalUrl}#webpage`;
+const pageTitle = page.title || config.title;
+const pageDescription = page.summary || config.description;
+const pageLanguage = page.lang || config.language || 'en';
+
+const isoDate = value => {
+  if (!value) {
+    return undefined;
+  }
+
+  if (typeof value.toISOString === 'function') {
+    return value.toISOString();
+  }
+
+  const parsed = new Date(value);
+  return Number.isNaN(parsed.valueOf()) ? undefined : parsed.toISOString();
+};
+
+const tagNames = [];
+if (page.tags && page.tags.length) {
+  if (typeof page.tags.each === 'function') {
+    page.tags.each(function(tag) {
+      if (tag.name) {
+        tagNames.push(tag.name);
+      }
+    });
+  } else if (Array.isArray(page.tags)) {
+    page.tags.forEach(function(tag) {
+      tagNames.push(tag.name || tag);
+    });
+  }
+}
+
+const graph = [
+  {
+    '@type': 'Person',
+    '@id': personId,
+    name: config.author || config.title,
+    url: siteUrl,
+    sameAs: [
+      'https://github.com/xfq',
+      'https://www.linkedin.com/in/xfq/'
+    ]
+  },
+  {
+    '@type': 'WebSite',
+    '@id': websiteId,
+    url: siteUrl,
+    name: config.title,
+    description: config.description,
+    inLanguage: config.language || 'en',
+    publisher: {
+      '@id': personId
+    }
+  },
+  {
+    '@type': 'WebPage',
+    '@id': webpageId,
+    url: canonicalUrl,
+    name: pageTitle,
+    description: pageDescription,
+    inLanguage: pageLanguage,
+    isPartOf: {
+      '@id': websiteId
+    }
+  }
+];
+
+const isPost = page.layout === 'post' || (page.source || '').startsWith('_posts/');
+if (isPost) {
+  graph.push({
+    '@type': 'BlogPosting',
+    '@id': `${canonicalUrl}#blogposting`,
+    headline: pageTitle,
+    description: pageDescription,
+    datePublished: isoDate(page.date),
+    dateModified: isoDate(page.updated || page.date),
+    inLanguage: pageLanguage,
+    keywords: tagNames,
+    author: {
+      '@id': personId
+    },
+    publisher: {
+      '@id': personId
+    },
+    mainEntityOfPage: {
+      '@id': webpageId
+    }
+  });
+}
+
+const jsonLd = JSON.stringify({
+  '@context': 'https://schema.org',
+  '@graph': graph
+}).replace(/</g, '\\u003c');
+%>
+<script type="application/ld+json"><%- jsonLd %></script>

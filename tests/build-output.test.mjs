@@ -42,6 +42,25 @@ const targetPathForHref = (href) => {
   return join("public", cleanHref.replace(/^\//, ""), "index.html");
 };
 
+const expectedCanonicalUrlForFile = (file) => {
+  const relativePath = file.replace(/^public\//, "");
+  const expectedPath = relativePath === "index.html"
+    ? ""
+    : relativePath.replace(/(?:\/)?index\.html$/, "/").replace(/\.html$/, ".html");
+
+  return `https://xuefuqiao.com/${expectedPath}`;
+};
+
+const jsonLdFor = (file) => {
+  const content = html(file);
+  const scripts = [...content.matchAll(/<script\b(?=[^>]*\btype="application\/ld\+json")[^>]*>([\s\S]*?)<\/script>/g)];
+
+  assert.equal(scripts.length, 1, `${file} should have exactly one JSON-LD script`);
+  return JSON.parse(scripts[0][1]);
+};
+
+const graphNode = (graph, id) => graph["@graph"].find(node => node["@id"] === id);
+
 before(() => {
   execFileSync("npm", ["run", "clean"], { stdio: "pipe" });
   execFileSync("npm", ["run", "build"], { stdio: "pipe" });
@@ -152,15 +171,58 @@ test("generated HTML pages expose canonical URLs", () => {
   for (const file of htmlFiles("public")) {
     const content = html(file);
     const canonicalLinks = [...content.matchAll(/<link\b(?=[^>]*\brel="canonical")(?=[^>]*\bhref="([^"]+)")[^>]*>/g)];
-    const relativePath = file.replace(/^public\//, "");
-    const expectedPath = relativePath === "index.html"
-      ? ""
-      : relativePath.replace(/(?:\/)?index\.html$/, "/").replace(/\.html$/, ".html");
-    const expectedUrl = `https://xuefuqiao.com/${expectedPath}`;
+    const expectedUrl = expectedCanonicalUrlForFile(file);
 
     assert.equal(canonicalLinks.length, 1, `${file} should have exactly one canonical URL`);
     assert.equal(canonicalLinks[0][1], expectedUrl, `${file} should canonicalize to ${expectedUrl}`);
   }
+});
+
+test("generated HTML pages expose JSON-LD website and webpage metadata", () => {
+  for (const file of htmlFiles("public")) {
+    const expectedUrl = expectedCanonicalUrlForFile(file);
+    const jsonLd = jsonLdFor(file);
+
+    assert.equal(jsonLd["@context"], "https://schema.org", `${file} should use the Schema.org context`);
+    assert.ok(Array.isArray(jsonLd["@graph"]), `${file} should expose an @graph`);
+
+    const person = graphNode(jsonLd, "https://xuefuqiao.com/#person");
+    const website = graphNode(jsonLd, "https://xuefuqiao.com/#website");
+    const webpage = graphNode(jsonLd, `${expectedUrl}#webpage`);
+
+    assert.equal(person["@type"], "Person", `${file} should describe the site owner`);
+    assert.equal(person.name, "Fuqiao Xue", `${file} should name the site owner`);
+    assert.deepEqual(person.sameAs, [
+      "https://github.com/xfq",
+      "https://www.linkedin.com/in/xfq/"
+    ]);
+
+    assert.equal(website["@type"], "WebSite", `${file} should describe the website`);
+    assert.equal(website.url, "https://xuefuqiao.com/", `${file} should use the configured site URL`);
+    assert.equal(website.publisher["@id"], "https://xuefuqiao.com/#person");
+
+    assert.equal(webpage["@type"], "WebPage", `${file} should describe the current page`);
+    assert.equal(webpage.url, expectedUrl, `${file} should use the canonical URL`);
+    assert.equal(webpage.isPartOf["@id"], "https://xuefuqiao.com/#website");
+  }
+});
+
+test("published posts expose JSON-LD BlogPosting metadata", () => {
+  const postUrl = "https://xuefuqiao.com/writing/ask-w3c-i18n/";
+  const jsonLd = jsonLdFor("public/writing/ask-w3c-i18n/index.html");
+  const blogPosting = graphNode(jsonLd, `${postUrl}#blogposting`);
+
+  assert.equal(blogPosting["@type"], "BlogPosting");
+  assert.equal(blogPosting.headline, "Ask W3C i18n");
+  assert.equal(
+    blogPosting.description,
+    "An experiment in using an AI-assisted, citation-grounded interface to make W3C Internationalization guidance easier to find."
+  );
+  assert.match(blogPosting.datePublished, /^2026-06-23T/);
+  assert.deepEqual(blogPosting.keywords, ["i18n", "w3c", "ai"]);
+  assert.equal(blogPosting.author["@id"], "https://xuefuqiao.com/#person");
+  assert.equal(blogPosting.publisher["@id"], "https://xuefuqiao.com/#person");
+  assert.equal(blogPosting.mainEntityOfPage["@id"], `${postUrl}#webpage`);
 });
 
 test("secondary pages render expected content and empty states", () => {
