@@ -75,6 +75,36 @@ test("homepage renders the approved information architecture", () => {
   assert.doesNotMatch(home, /href="\/talks\/"/);
 });
 
+test("generated pages include favicon metadata and assets", () => {
+  const home = html("public/index.html");
+
+  assert.match(home, /<link rel="apple-touch-icon" sizes="180x180" href="\/apple-touch-icon\.png">/);
+  assert.match(home, /<link rel="icon" type="image\/png" sizes="32x32" href="\/favicon-32x32\.png">/);
+  assert.match(home, /<link rel="icon" type="image\/png" sizes="16x16" href="\/favicon-16x16\.png">/);
+  assert.match(home, /<link rel="manifest" href="\/site\.webmanifest">/);
+  assert.match(home, /<link rel="shortcut icon" href="\/favicon\.ico">/);
+
+  for (const path of [
+    "public/apple-touch-icon.png",
+    "public/favicon-32x32.png",
+    "public/favicon-16x16.png",
+    "public/favicon.ico",
+    "public/android-chrome-192x192.png",
+    "public/android-chrome-512x512.png",
+    "public/site.webmanifest"
+  ]) {
+    assert.equal(existsSync(path), true, `${path} should exist`);
+  }
+
+  const manifest = JSON.parse(html("public/site.webmanifest"));
+  assert.equal(manifest.name, "Fuqiao Xue");
+  assert.equal(manifest.short_name, "Fuqiao Xue");
+  assert.deepEqual(
+    manifest.icons.map(icon => icon.src),
+    ["/android-chrome-192x192.png", "/android-chrome-512x512.png"]
+  );
+});
+
 test("secondary pages render expected content and empty states", () => {
   const writingIndex = html("public/writing/index.html");
   assert.match(writingIndex, /Ask W3C i18n/);
