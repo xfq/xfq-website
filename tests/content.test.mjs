@@ -1,8 +1,21 @@
 import assert from "node:assert/strict";
-import { existsSync, readFileSync } from "node:fs";
+import { existsSync, readFileSync, readdirSync } from "node:fs";
+import { basename, join } from "node:path";
 import { test } from "node:test";
+import frontMatter from "hexo-front-matter";
+import yaml from "js-yaml";
 
 const read = (path) => readFileSync(path, "utf8");
+const parseMarkdown = (path) => frontMatter.parse(read(path));
+const postFiles = () => readdirSync("source/_posts")
+  .filter(file => file.endsWith(".md"))
+  .sort()
+  .map(file => join("source/_posts", file));
+
+const assertNonEmptyString = (value, message) => {
+  assert.equal(typeof value, "string", message);
+  assert.notEqual(value.trim(), "", message);
+};
 
 test("primary content routes exist", () => {
   for (const path of [
@@ -33,6 +46,70 @@ test("placeholder posts are intentionally unpublished", () => {
   assert.match(second, /- knowledge-systems/);
 });
 
+test("post filenames use slug-only names for permalink generation", () => {
+  for (const path of postFiles()) {
+    const filename = basename(path);
+
+    assert.doesNotMatch(
+      filename,
+      /^\d{4}-\d{2}-\d{2}-/,
+      `${filename} should not duplicate the permalink date`
+    );
+    assert.match(
+      filename,
+      /^[a-z0-9]+(?:-[a-z0-9]+)*\.md$/,
+      `${filename} should be a lowercase URL slug`
+    );
+  }
+});
+
+test("post front matter provides complete listing metadata", () => {
+  const posts = postFiles().map(path => [path, parseMarkdown(path)]);
+  const slugs = new Set();
+
+  assert.ok(posts.length > 0, "expected at least one post");
+
+  for (const [path, post] of posts) {
+    const slug = basename(path, ".md");
+
+    assert.equal(slugs.has(slug), false, `${slug} should be unique`);
+    slugs.add(slug);
+
+    assertNonEmptyString(post.title, `${path} should have a title`);
+    assert.ok(post.date instanceof Date, `${path} should have a parsed date`);
+    assert.equal(Number.isNaN(post.date.valueOf()), false, `${path} should have a valid date`);
+    assertNonEmptyString(post.summary, `${path} should have a summary`);
+    assert.equal(post.lang, "en", `${path} should opt into the English writing surface`);
+    assert.equal(typeof post.featured, "boolean", `${path} should set featured explicitly`);
+    assert.equal(typeof post.published, "boolean", `${path} should set published explicitly`);
+    assertNonEmptyString(post._content, `${path} should have body content`);
+
+    assert.ok(Array.isArray(post.tags), `${path} should have tags`);
+    assert.ok(post.tags.length > 0, `${path} should have at least one tag`);
+    for (const tag of post.tags) {
+      assert.match(tag, /^[a-z0-9]+(?:-[a-z0-9]+)*$/, `${path} has invalid tag ${tag}`);
+    }
+  }
+});
+
+test("section pages declare the layout and language used by the theme", () => {
+  const pages = [
+    ["source/writing/index.md", "writing", "en"],
+    ["source/projects/index.md", "projects", "en"],
+    ["source/talks/index.md", "talks", "en"],
+    ["source/about/index.md", "page", "en"],
+    ["source/zh/index.md", "page", "zh-Hans"]
+  ];
+
+  for (const [path, layout, lang] of pages) {
+    const page = parseMarkdown(path);
+
+    assertNonEmptyString(page.title, `${path} should have a title`);
+    assert.equal(page.layout, layout, `${path} should use the ${layout} layout`);
+    assert.equal(page.lang, lang, `${path} should declare ${lang}`);
+  }
+});
+
 test("projects and talks data files support data-driven pages", () => {
   const projects = read("source/_data/projects.yml");
   const talks = read("source/_data/talks.yml");
@@ -41,6 +118,52 @@ test("projects and talks data files support data-driven pages", () => {
   assert.match(projects, /featured: true/);
   assert.match(projects, /name: Language Enablement/);
   assert.match(talks, /^# Talks are listed here when public talk metadata is available\.$/m);
+});
+
+test("project data entries match the project-list partial contract", () => {
+  const projects = yaml.load(read("source/_data/projects.yml"));
+  const names = new Set();
+
+  assert.ok(Array.isArray(projects), "projects data should be an array");
+  assert.ok(projects.length > 0, "projects data should not be empty");
+
+  for (const project of projects) {
+    assertNonEmptyString(project.name, "project should have a name");
+    assert.equal(names.has(project.name), false, `${project.name} should be unique`);
+    names.add(project.name);
+
+    assertNonEmptyString(project.description, `${project.name} should have a description`);
+    assertNonEmptyString(project.url, `${project.name} should have a URL`);
+    assert.match(project.url, /^https:\/\//, `${project.name} should use an HTTPS URL`);
+    assertNonEmptyString(project.role, `${project.name} should have a role`);
+    assert.equal(typeof project.featured, "boolean", `${project.name} should set featured explicitly`);
+    assert.ok(Array.isArray(project.tags), `${project.name} should have tags`);
+    assert.ok(project.tags.length > 0, `${project.name} should have at least one tag`);
+    for (const tag of project.tags) {
+      assert.match(tag, /^[A-Za-z0-9]+(?:-[A-Za-z0-9]+)*$/, `${project.name} has invalid tag ${tag}`);
+    }
+  }
+});
+
+test("talk data entries match the talk-list partial contract when present", () => {
+  const talks = yaml.load(read("source/_data/talks.yml"));
+
+  assert.ok(Array.isArray(talks), "talks data should be an array");
+
+  for (const talk of talks) {
+    assertNonEmptyString(talk.title, "talk should have a title");
+    assertNonEmptyString(talk.event, `${talk.title} should have an event`);
+
+    if (talk.url) {
+      assert.match(talk.url, /^https:\/\//, `${talk.title} should use an HTTPS URL`);
+    }
+
+    for (const optionalField of ["date", "location", "summary"]) {
+      if (talk[optionalField]) {
+        assertNonEmptyString(talk[optionalField], `${talk.title} should have ${optionalField}`);
+      }
+    }
+  }
 });
 
 test("English writing surfaces filter posts by language", () => {

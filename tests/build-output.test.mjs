@@ -51,6 +51,8 @@ test("generated routes include the primary site sections", () => {
   for (const path of [
     "public/index.html",
     "public/writing/index.html",
+    "public/projects/index.html",
+    "public/talks/index.html",
     "public/about/index.html",
     "public/zh/index.html"
   ]) {
@@ -118,6 +120,16 @@ test("secondary pages render expected content and empty states", () => {
   assert.doesNotMatch(writingIndex, /Internationalization Notes for the Web Platform/);
   assert.doesNotMatch(writingIndex, /Working With Multilingual Technical Knowledge/);
   assert.match(writingIndex, /<a\b(?=[^>]*href="\/writing\/")(?=[^>]*class="is-active")(?=[^>]*aria-current="page")[^>]*>Writing<\/a>/);
+
+  const projectsIndex = html("public/projects/index.html");
+  assert.match(projectsIndex, /W3C Internationalization Activity/);
+  assert.match(projectsIndex, /Language Enablement/);
+  assert.match(projectsIndex, /<ol\b(?=[^>]*class="item-list")[^>]*role="list"/);
+  assert.match(projectsIndex, /<ul\b(?=[^>]*class="tag-list")[^>]*role="list"[^>]*aria-label="Project tags"/);
+
+  const talksIndex = html("public/talks/index.html");
+  assert.match(talksIndex, /<p\b(?=[^>]*class="empty-state")[^>]*>No public talks are listed on this site yet\.<\/p>/);
+
   assert.match(html("public/about/index.html"), /leads the W3C Internationalization Activity/);
   assert.match(html("public/zh/index.html"), /中文内容入口/);
 });
