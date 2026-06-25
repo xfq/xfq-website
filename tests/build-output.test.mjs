@@ -75,7 +75,8 @@ test("generated routes include the primary site sections", () => {
     "public/about/index.html",
     "public/zh/index.html",
     "public/robots.txt",
-    "public/sitemap.xml"
+    "public/sitemap.xml",
+    "public/llms.txt"
   ]) {
     assert.equal(existsSync(path), true, `${path} should exist`);
   }
@@ -111,6 +112,31 @@ test("sitemap lists public pages and excludes unpublished posts", () => {
 
   assert.doesNotMatch(sitemap, /i18n-notes/);
   assert.doesNotMatch(sitemap, /working-with-multilingual-technical-knowledge/);
+});
+
+test("llms.txt exposes a Markdown-formatted site guide for LLMs", () => {
+  const llms = html("public/llms.txt");
+
+  assert.match(llms, /^# Fuqiao Xue$/m);
+  assert.match(llms, /> Personal website for Fuqiao Xue/);
+
+  assert.match(llms, /^## Core Pages$/m);
+  assert.match(llms, /^## Writing$/m);
+  assert.match(llms, /^## Optional$/m);
+
+  for (const url of [
+    "https://xuefuqiao.com/about/",
+    "https://xuefuqiao.com/writing/",
+    "https://xuefuqiao.com/projects/",
+    "https://xuefuqiao.com/talks/",
+    "https://xuefuqiao.com/zh/",
+    "https://xuefuqiao.com/writing/ask-w3c-i18n/"
+  ]) {
+    assert.equal(llms.includes(url), true, `${url} should be listed`);
+  }
+
+  assert.doesNotMatch(llms, /i18n-notes/);
+  assert.doesNotMatch(llms, /working-with-multilingual-technical-knowledge/);
 });
 
 test("homepage renders the approved information architecture", () => {
