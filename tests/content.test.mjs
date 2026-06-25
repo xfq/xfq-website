@@ -23,8 +23,8 @@ test("primary content routes exist", () => {
     "source/projects/index.md",
     "source/talks/index.md",
     "source/about/index.md",
-    "source/zh/index.md",
-    "source/zh/writing/index.md"
+    "source/zh-Hans/index.md",
+    "source/zh-Hans/writing/index.md"
   ]) {
     assert.equal(existsSync(path), true, `${path} should exist`);
   }
@@ -99,8 +99,8 @@ test("section pages declare the layout and language used by the theme", () => {
     ["source/projects/index.md", "projects", "en"],
     ["source/talks/index.md", "talks", "en"],
     ["source/about/index.md", "page", "en"],
-    ["source/zh/index.md", "page", "zh-Hans"],
-    ["source/zh/writing/index.md", "writing", "zh-Hans"]
+    ["source/zh-Hans/index.md", "page", "zh-Hans"],
+    ["source/zh-Hans/writing/index.md", "writing", "zh-Hans"]
   ];
 
   for (const [path, layout, lang] of pages) {

@@ -73,7 +73,7 @@ test("generated routes include the primary site sections", () => {
     "public/projects/index.html",
     "public/talks/index.html",
     "public/about/index.html",
-    "public/zh/index.html",
+    "public/zh-Hans/index.html",
     "public/robots.txt",
     "public/sitemap.xml",
     "public/llms.txt"
@@ -102,7 +102,7 @@ test("sitemap lists public pages and excludes unpublished posts", () => {
     "https://xuefuqiao.com/projects/",
     "https://xuefuqiao.com/talks/",
     "https://xuefuqiao.com/about/",
-    "https://xuefuqiao.com/zh/",
+    "https://xuefuqiao.com/zh-Hans/",
     "https://xuefuqiao.com/writing/ask-w3c-i18n/"
   ]) {
     assert.equal(sitemap.includes(`<loc>${url}</loc>`), true, `${url} should be listed`);
@@ -129,8 +129,8 @@ test("llms.txt exposes a Markdown-formatted site guide for LLMs", () => {
     "https://xuefuqiao.com/writing/",
     "https://xuefuqiao.com/projects/",
     "https://xuefuqiao.com/talks/",
-    "https://xuefuqiao.com/zh/",
-    "https://xuefuqiao.com/zh/writing/",
+    "https://xuefuqiao.com/zh-Hans/",
+    "https://xuefuqiao.com/zh-Hans/writing/",
     "https://xuefuqiao.com/writing/ask-w3c-i18n/",
     "https://xuefuqiao.com/writing/w3c-i18n-intro/"
   ]) {
@@ -270,7 +270,7 @@ test("secondary pages render expected content and empty states", () => {
   assert.match(talksIndex, /<p\b(?=[^>]*class="empty-state")[^>]*>No public talks are listed on this site yet\.<\/p>/);
 
   assert.match(html("public/about/index.html"), /leads the W3C Internationalization Activity/);
-  assert.match(html("public/zh/index.html"), /中文内容入口/);
+  assert.match(html("public/zh-Hans/index.html"), /中文内容入口/);
 });
 
 test("unpublished placeholder posts do not generate public detail pages", () => {

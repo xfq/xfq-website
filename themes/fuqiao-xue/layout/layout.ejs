@@ -39,13 +39,13 @@ const canonicalUrl = `${canonicalBase}${canonicalPath}`;
     <!-- hreflang -->
     <%
     const pageLang = page.lang || config.language || 'en';
-    const isZh = page.path.startsWith('zh/');
+    const isZh = page.path.startsWith('zh-Hans/');
     const altLang = isZh ? 'en' : 'zh-Hans';
-    const altPath = isZh ? page.path.replace(/^zh\//, '') : 'zh/' + page.path;
+    const altPath = isZh ? page.path.replace(/^zh-Hans\//, '') : 'zh-Hans/' + page.path;
     const altUrl = canonicalBase + '/' + altPath.replace(/index\.html$/, '').replace(/\.html$/, '');
     %>
     <link rel="alternate" hreflang="<%= pageLang %>" href="<%= canonicalUrl %>">
-    <%_ if (page.path === 'index.html' || page.path === 'zh/index.html') { _%>
+    <%_ if (page.path === 'index.html' || page.path === 'zh-Hans/index.html') { _%>
     <link rel="alternate" hreflang="<%= altLang %>" href="<%= altUrl %>">
     <%_ } _%>
     <link rel="alternate" hreflang="x-default" href="<%= isZh ? altUrl : canonicalUrl %>">

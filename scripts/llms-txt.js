@@ -92,8 +92,8 @@ hexo.extend.generator.register("llms-txt", function generateLlmsTxt(locals) {
   lines.push(
     "",
     "## Chinese",
-    `- [中文首页](${canonicalUrl(baseUrl, root, "zh/index.html")}): Chinese-language content entry point.`,
-    `- [文章](${canonicalUrl(baseUrl, root, "zh/writing/index.html")}): Articles and notes in Chinese.`
+    `- [中文首页](${canonicalUrl(baseUrl, root, "zh-Hans/index.html")}): Chinese-language content entry point.`,
+    `- [文章](${canonicalUrl(baseUrl, root, "zh-Hans/writing/index.html")}): Articles and notes in Chinese.`
   );
 
   if (zhPosts.length > 0) {
