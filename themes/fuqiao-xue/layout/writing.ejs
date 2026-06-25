@@ -1,13 +1,20 @@
-<% const isEnglishPost = post => !post.lang || post.lang === 'en'; %>
-<% const writingPosts = site.posts.filter(isEnglishPost).sort('date', -1); %>
+<% const isZh = (page.lang || '').startsWith('zh'); %>
+<% const targetLang = isZh ? 'zh-Hans' : 'en'; %>
+<% const writingPosts = site.posts.filter(post => post.lang === targetLang).sort('date', -1); %>
 
 <section class="section page-header">
+<% if (isZh) { %>
+  <p class="eyebrow">文章</p>
+  <h1>文章与笔记</h1>
+  <p>薛富侨关于国际化、Web 平台和 AI 的文章。</p>
+<% } else { %>
   <p class="eyebrow">Writing</p>
   <h1>Articles and notes</h1>
   <p>Writing by Fuqiao Xue on internationalization, the Web platform, and AI.</p>
+<% } %>
 </section>
 
 <section class="section panel" aria-labelledby="writing-list-heading">
-  <h2 id="writing-list-heading" class="visually-hidden">All writing</h2>
-  <%- partial('partial/post-list', { posts: writingPosts }) %>
+  <h2 id="writing-list-heading" class="visually-hidden"><%= isZh ? '全部文章' : 'All writing' %></h2>
+  <%- partial('partial/post-list', { posts: writingPosts, lang: targetLang }) %>
 </section>

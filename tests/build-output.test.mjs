@@ -122,7 +122,7 @@ test("llms.txt exposes a Markdown-formatted site guide for LLMs", () => {
 
   assert.match(llms, /^## Core Pages$/m);
   assert.match(llms, /^## Writing$/m);
-  assert.match(llms, /^## Optional$/m);
+  assert.match(llms, /^## Chinese$/m);
 
   for (const url of [
     "https://xuefuqiao.com/about/",
@@ -130,7 +130,9 @@ test("llms.txt exposes a Markdown-formatted site guide for LLMs", () => {
     "https://xuefuqiao.com/projects/",
     "https://xuefuqiao.com/talks/",
     "https://xuefuqiao.com/zh/",
-    "https://xuefuqiao.com/writing/ask-w3c-i18n/"
+    "https://xuefuqiao.com/zh/writing/",
+    "https://xuefuqiao.com/writing/ask-w3c-i18n/",
+    "https://xuefuqiao.com/writing/w3c-i18n-intro/"
   ]) {
     assert.equal(llms.includes(url), true, `${url} should be listed`);
   }

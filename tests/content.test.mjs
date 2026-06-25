@@ -23,7 +23,8 @@ test("primary content routes exist", () => {
     "source/projects/index.md",
     "source/talks/index.md",
     "source/about/index.md",
-    "source/zh/index.md"
+    "source/zh/index.md",
+    "source/zh/writing/index.md"
   ]) {
     assert.equal(existsSync(path), true, `${path} should exist`);
   }
@@ -79,7 +80,7 @@ test("post front matter provides complete listing metadata", () => {
     assert.ok(post.date instanceof Date, `${path} should have a parsed date`);
     assert.equal(Number.isNaN(post.date.valueOf()), false, `${path} should have a valid date`);
     assertNonEmptyString(post.summary, `${path} should have a summary`);
-    assert.equal(post.lang, "en", `${path} should opt into the English writing surface`);
+    assert.match(post.lang, /^(en|zh-Hans)$/, `${path} should declare a supported language (en or zh-Hans)`);
     assert.equal(typeof post.featured, "boolean", `${path} should set featured explicitly`);
     assert.equal(typeof post.published, "boolean", `${path} should set published explicitly`);
     assertNonEmptyString(post._content, `${path} should have body content`);
@@ -98,7 +99,8 @@ test("section pages declare the layout and language used by the theme", () => {
     ["source/projects/index.md", "projects", "en"],
     ["source/talks/index.md", "talks", "en"],
     ["source/about/index.md", "page", "en"],
-    ["source/zh/index.md", "page", "zh-Hans"]
+    ["source/zh/index.md", "page", "zh-Hans"],
+    ["source/zh/writing/index.md", "writing", "zh-Hans"]
   ];
 
   for (const [path, layout, lang] of pages) {
@@ -172,6 +174,6 @@ test("English writing surfaces filter posts by language", () => {
 
   assert.match(homeTemplate, /const isEnglishPost = post => !post\.lang \|\| post\.lang === 'en';/);
   assert.match(homeTemplate, /site\.posts\.filter\(post => isEnglishPost\(post\) && post\.featured\)\.sort\('date', -1\)/);
-  assert.match(writingTemplate, /const isEnglishPost = post => !post\.lang \|\| post\.lang === 'en';/);
-  assert.match(writingTemplate, /site\.posts\.filter\(isEnglishPost\)\.sort\('date', -1\)/);
+  assert.match(writingTemplate, /const targetLang = isZh \? 'zh-Hans' : 'en';/);
+  assert.match(writingTemplate, /site\.posts\.filter\(post => post\.lang === targetLang\)\.sort\('date', -1\)/);
 });

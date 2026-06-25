@@ -5,3 +5,5 @@ lang: zh-Hans
 ---
 
 薛富侨的中文内容入口。
+
+- [文章](/zh/writing/)

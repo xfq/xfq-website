@@ -42,6 +42,7 @@ const canonicalUrl = (baseUrl, root, routePath) => {
 
 const publicPost = (item) => item && item.published !== false && item.path;
 const englishPost = (item) => !item.lang || item.lang === "en";
+const chinesePost = (item) => item.lang === "zh-Hans";
 
 hexo.extend.generator.register("llms-txt", function generateLlmsTxt(locals) {
   const { title, description, url, root } = this.config;
@@ -51,6 +52,11 @@ hexo.extend.generator.register("llms-txt", function generateLlmsTxt(locals) {
   const posts = collectionToArray(locals.posts)
     .filter(publicPost)
     .filter(englishPost)
+    .sort((a, b) => b.date - a.date);
+
+  const zhPosts = collectionToArray(locals.posts)
+    .filter(publicPost)
+    .filter(chinesePost)
     .sort((a, b) => b.date - a.date);
 
   const corePages = [
@@ -86,8 +92,17 @@ hexo.extend.generator.register("llms-txt", function generateLlmsTxt(locals) {
   lines.push(
     "",
     "## Chinese",
-    `- [中文内容](${canonicalUrl(baseUrl, root, "zh/index.html")}): Chinese-language content and resources.`
+    `- [中文首页](${canonicalUrl(baseUrl, root, "zh/index.html")}): Chinese-language content entry point.`,
+    `- [文章](${canonicalUrl(baseUrl, root, "zh/writing/index.html")}): Articles and notes in Chinese.`
   );
+
+  if (zhPosts.length > 0) {
+    for (const post of zhPosts) {
+      const postUrl = canonicalUrl(baseUrl, root, post.path);
+      const summary = post.summary || "";
+      lines.push(`- [${post.title}](${postUrl}): ${summary}`);
+    }
+  }
 
   lines.push("");
 
