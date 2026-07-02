@@ -47,6 +47,15 @@ test("placeholder posts are intentionally unpublished", () => {
   assert.match(second, /- knowledge-systems/);
 });
 
+test("LLM article is published", () => {
+  const article = read("source/_posts/llm-or-not.md");
+
+  assert.match(article, /^title: 什么项目适合用大模型？$/m);
+  assert.match(article, /^lang: zh-Hans$/m);
+  assert.match(article, /^published: true$/m);
+  assert.match(article, /- ai/);
+});
+
 test("post filenames use slug-only names for article URLs", () => {
   for (const path of postFiles()) {
     const filename = basename(path);
