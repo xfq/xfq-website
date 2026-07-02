@@ -286,6 +286,16 @@ test("styled list markup preserves list semantics", () => {
   assert.doesNotMatch(writingIndex, /<p\b(?=[^>]*class="empty-state")[^>]*>No writing is listed here yet\.<\/p>/);
 });
 
+test("article lists do not show language labels", () => {
+  for (const path of ["public/writing/index.html", "public/zh-Hans/writing/index.html"]) {
+    const listMeta = [...html(path).matchAll(/<div class="post-list__meta">([\s\S]*?)<\/div>/g)]
+      .map(match => match[1])
+      .join("\n");
+
+    assert.doesNotMatch(listMeta, /<span>en<\/span>|<span>zh-Hans<\/span>/, `${path} should hide language labels`);
+  }
+});
+
 test("the published post generates a public detail page", () => {
   const path = "public/writing/ask-w3c-i18n/index.html";
   assert.equal(existsSync(path), true, `${path} should exist`);

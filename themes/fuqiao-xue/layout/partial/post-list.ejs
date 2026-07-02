@@ -5,7 +5,6 @@
         <a class="post-list__title" href="<%- url_for(post.path) %>"><%= post.title %></a>
         <div class="post-list__meta">
           <time datetime="<%= date(post.date, 'YYYY-MM-DD') %>"><%= date(post.date, 'YYYY-MM-DD') %></time>
-          <% if (post.lang) { %><span><%= post.lang %></span><% } %>
         </div>
         <% if (post.summary) { %><p><%= post.summary %></p><% } %>
         <% if (post.tags && post.tags.length) { %>
