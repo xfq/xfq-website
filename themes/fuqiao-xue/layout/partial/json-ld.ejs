@@ -64,6 +64,7 @@ const graph = [
     url: canonicalUrl,
     name: pageTitle,
     description: pageDescription,
+    dateModified: isoDate(page.updated || page.date),
     inLanguage: pageLanguage,
     isPartOf: {
       '@id': websiteId
@@ -76,6 +77,8 @@ if (isPost) {
   graph.push({
     '@type': 'BlogPosting',
     '@id': `${canonicalUrl}#blogposting`,
+    url: canonicalUrl,
+    name: pageTitle,
     headline: pageTitle,
     description: pageDescription,
     datePublished: isoDate(page.date),

@@ -87,6 +87,7 @@ test("robots.txt advertises the generated sitemap", () => {
 
   assert.match(robots, /^User-agent: \*$/m);
   assert.match(robots, /^Allow: \/$/m);
+  assert.match(robots, /^User-agent: OAI-SearchBot$/m);
   assert.match(robots, /^Sitemap: https:\/\/xuefuqiao\.com\/sitemap\.xml$/m);
 });
 
@@ -107,6 +108,12 @@ test("sitemap lists public pages and excludes unpublished posts", () => {
   ]) {
     assert.equal(sitemap.includes(`<loc>${url}</loc>`), true, `${url} should be listed`);
   }
+
+  assert.match(sitemap, /<lastmod>\d{4}-\d{2}-\d{2}<\/lastmod>/);
+  assert.match(
+    sitemap,
+    /<url>\s*<loc>https:\/\/xuefuqiao\.com\/writing\/ask-w3c-i18n\/<\/loc>\s*<lastmod>2026-06-23<\/lastmod>\s*<\/url>/
+  );
 
   assert.doesNotMatch(sitemap, /\/writing\/\d{4}\/\d{2}\/\d{2}\//);
 
@@ -220,17 +227,21 @@ test("generated HTML pages expose JSON-LD website and webpage metadata", () => {
 
     assert.equal(person["@type"], "Person", `${file} should describe the site owner`);
     assert.equal(person.name, "Fuqiao Xue", `${file} should name the site owner`);
+    assert.equal(person.url, "https://xuefuqiao.com/", `${file} should link the site owner to the canonical home URL`);
     assert.deepEqual(person.sameAs, [
       "https://github.com/xfq",
       "https://www.linkedin.com/in/xfq/"
     ]);
 
     assert.equal(website["@type"], "WebSite", `${file} should describe the website`);
+    assert.equal(website.name, "Fuqiao Xue", `${file} should name the website`);
     assert.equal(website.url, "https://xuefuqiao.com/", `${file} should use the configured site URL`);
     assert.equal(website.publisher["@id"], "https://xuefuqiao.com/#person");
 
     assert.equal(webpage["@type"], "WebPage", `${file} should describe the current page`);
     assert.equal(webpage.url, expectedUrl, `${file} should use the canonical URL`);
+    assert.equal(typeof webpage.name, "string", `${file} should name the current page`);
+    assert.match(webpage.dateModified, /^\d{4}-\d{2}-\d{2}T/, `${file} should expose a modified date`);
     assert.equal(webpage.isPartOf["@id"], "https://xuefuqiao.com/#website");
   }
 });
@@ -241,6 +252,8 @@ test("published posts expose JSON-LD BlogPosting metadata", () => {
   const blogPosting = graphNode(jsonLd, `${postUrl}#blogposting`);
 
   assert.equal(blogPosting["@type"], "BlogPosting");
+  assert.equal(blogPosting.url, postUrl);
+  assert.equal(blogPosting.name, "Ask W3C i18n");
   assert.equal(blogPosting.headline, "Ask W3C i18n");
   assert.equal(
     blogPosting.description,

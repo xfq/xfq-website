@@ -49,6 +49,20 @@ const canonicalUrl = (baseUrl, root, routePath) => {
   return `${normalizeBaseUrl(baseUrl)}${rootPath}${urlPath}`.replace(/([^:]\/)\/+/g, "$1");
 };
 
+const isoDate = (value) => {
+  if (!value) {
+    return undefined;
+  }
+
+  const date = typeof value.toDate === "function" ? value.toDate() : new Date(value);
+
+  if (Number.isNaN(date.valueOf())) {
+    return undefined;
+  }
+
+  return date.toISOString().slice(0, 10);
+};
+
 const publicPage = (item) => item && item.published !== false && item.path && item.path.endsWith(".html");
 const publicPost = (item) => item && item.published !== false && item.path;
 
@@ -57,17 +71,29 @@ hexo.extend.generator.register("sitemap", function generateSitemap(locals) {
   const baseUrl = normalizeBaseUrl(url);
   const pages = collectionToArray(locals.pages).filter(publicPage);
   const posts = collectionToArray(locals.posts).filter(publicPost);
-  const urls = [...pages, ...posts]
-    .map((item) => canonicalUrl(baseUrl, root, item.path))
-    .filter((item, index, list) => list.indexOf(item) === index)
-    .sort();
+  const urlsByLoc = new Map();
+
+  for (const item of [...pages, ...posts]) {
+    const loc = canonicalUrl(baseUrl, root, item.path);
+    const isPost = (item.source || "").startsWith("_posts/");
+
+    if (!urlsByLoc.has(loc)) {
+      urlsByLoc.set(loc, {
+        loc,
+        lastmod: isoDate(isPost ? item.date : item.updated || item.date)
+      });
+    }
+  }
+
+  const urls = [...urlsByLoc.values()].sort((a, b) => a.loc.localeCompare(b.loc));
 
   const sitemap = [
     '<?xml version="1.0" encoding="UTF-8"?>',
     `<urlset xmlns="${XML_NAMESPACE}">`,
-    ...urls.map((loc) => [
+    ...urls.map(({ loc, lastmod }) => [
       "  <url>",
       `    <loc>${escapeXml(loc)}</loc>`,
+      ...(lastmod ? [`    <lastmod>${escapeXml(lastmod)}</lastmod>`] : []),
       "  </url>"
     ].join("\n")),
     "</urlset>",
@@ -77,6 +103,10 @@ hexo.extend.generator.register("sitemap", function generateSitemap(locals) {
   const robots = [
     "User-agent: *",
     "Allow: /",
+    "",
+    "User-agent: OAI-SearchBot",
+    "Allow: /",
+    "",
     `Sitemap: ${canonicalUrl(baseUrl, root, "sitemap.xml")}`,
     ""
   ].join("\n");
