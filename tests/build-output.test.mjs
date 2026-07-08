@@ -155,7 +155,14 @@ test("homepage renders the approved information architecture", () => {
   assert.match(home, /css\/style\.css/);
   assert.match(home, /Web standards and internationalization/);
   assert.match(home, /Latest Writing/);
+  assert.match(home, /The Work That Remains Human/);
   assert.match(home, /Ask W3C i18n/);
+  assert.equal(
+    home.indexOf("The Work That Remains Human") < home.indexOf("Ask W3C i18n"),
+    true,
+    "homepage should list newer English writing before older English writing"
+  );
+  assert.doesNotMatch(home, /什么项目适合用大模型？/);
   assert.doesNotMatch(home, /Internationalization Notes for the Web Platform/);
   assert.doesNotMatch(home, /Working With Multilingual Technical Knowledge/);
   assert.doesNotMatch(home, /Selected Work/);

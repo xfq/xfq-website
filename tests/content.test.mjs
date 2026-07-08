@@ -47,6 +47,15 @@ test("placeholder posts are intentionally unpublished", () => {
   assert.match(second, /- knowledge-systems/);
 });
 
+test('"The Work That Remains Human" article is published', () => {
+  const article = read("source/_posts/the-work-that-remains-human.md");
+
+  assert.match(article, /^title: The Work That Remains Human$/m);
+  assert.match(article, /^lang: en$/m);
+  assert.match(article, /^published: true$/m);
+  assert.match(article, /- ai/);
+});
+
 test("LLM article is published", () => {
   const article = read("source/_posts/llm-or-not.md");
 
@@ -188,7 +197,8 @@ test("English writing surfaces filter posts by language", () => {
   const writingTemplate = read("themes/fuqiao-xue/layout/writing.ejs");
 
   assert.match(homeTemplate, /const isEnglishPost = post => !post\.lang \|\| post\.lang === 'en';/);
-  assert.match(homeTemplate, /site\.posts\.filter\(post => isEnglishPost\(post\) && post\.featured\)\.sort\('date', -1\)/);
+  assert.match(homeTemplate, /site\.posts\.filter\(isEnglishPost\)\.sort\('date', -1\)\.limit\(3\)/);
+  assert.doesNotMatch(homeTemplate, /post\.featured/);
   assert.match(writingTemplate, /const targetLang = isZh \? 'zh-Hans' : 'en';/);
   assert.match(writingTemplate, /site\.posts\.filter\(post => post\.lang === targetLang\)\.sort\('date', -1\)/);
 });

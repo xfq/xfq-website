@@ -1,5 +1,5 @@
 <% const isEnglishPost = post => !post.lang || post.lang === 'en'; %>
-<% const latestPosts = site.posts.filter(post => isEnglishPost(post) && post.featured).sort('date', -1).limit(3); %>
+<% const latestPosts = site.posts.filter(isEnglishPost).sort('date', -1).limit(3); %>
 
 <section class="hero section" aria-labelledby="home-title">
   <div class="hero__body">
