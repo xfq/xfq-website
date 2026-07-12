@@ -331,6 +331,18 @@ test("the published post generates a public detail page", () => {
   assert.match(post, /The Tool/);
 });
 
+test("the clreq skill article is published on the Chinese writing surface", () => {
+  const path = "public/writing/clreq-skills/index.html";
+  const title = "《中文排版需求》 Skill";
+  const chineseWriting = html("public/zh-Hans/writing/index.html");
+
+  assert.equal(existsSync(path), true, `${path} should exist`);
+  assert.match(html(path), new RegExp(`<h1>${title}</h1>`));
+  assert.match(chineseWriting, /href="\/writing\/clreq-skills\/"/);
+  assert.match(chineseWriting, new RegExp(title));
+  assert.doesNotMatch(html("public/writing/index.html"), new RegExp(title));
+});
+
 test("dark editorial stylesheet is generated with required tokens", () => {
   const css = html("public/css/style.css");
   assert.match(css, /--color-bg: #0d1117;/);

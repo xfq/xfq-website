@@ -65,6 +65,16 @@ test("LLM article is published", () => {
   assert.match(article, /- ai/);
 });
 
+test("clreq skill article is published", () => {
+  const article = read("source/_posts/clreq-skills.md");
+
+  assert.match(article, /^title: 《中文排版需求》 Skill$/m);
+  assert.match(article, /^lang: zh-Hans$/m);
+  assert.match(article, /^published: true$/m);
+  assert.match(article, /- i18n/);
+  assert.match(article, /- ai/);
+});
+
 test("post filenames use slug-only names for article URLs", () => {
   for (const path of postFiles()) {
     const filename = basename(path);
