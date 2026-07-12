@@ -343,6 +343,21 @@ test("the clreq skill article is published on the Chinese writing surface", () =
   assert.doesNotMatch(html("public/writing/index.html"), new RegExp(title));
 });
 
+test("articles render styled HTML and CSS syntax highlighting", () => {
+  const post = html("public/writing/clreq-skills/index.html");
+  const css = html("public/css/style.css");
+
+  assert.match(post, /<figure class="highlight html">[\s\S]*class="hljs-tag"[\s\S]*class="hljs-attr"[\s\S]*class="hljs-string"/);
+  assert.match(post, /<figure class="highlight css">[\s\S]*class="hljs-selector-class"[\s\S]*class="hljs-attribute"[\s\S]*class="hljs-built_in"[\s\S]*class="hljs-number"/);
+  assert.match(css, /\.prose__body \.hljs-tag/);
+  assert.match(css, /\.prose__body \.hljs-selector-class/);
+  assert.match(css, /\.prose__body \.hljs-string/);
+  assert.match(css, /\.prose__body \.hljs-number/);
+  assert.match(css, /\.prose__body \.highlight table\s*{[\s\S]*?table-layout: fixed;/);
+  assert.match(css, /--font-mono: ui-monospace, "SFMono-Regular", "SF Mono", "Cascadia Code", "JetBrains Mono", Menlo, Monaco, Consolas, "Liberation Mono", monospace;/);
+  assert.match(css, /\.prose__body code\s*{[\s\S]*?font-size-adjust: from-font;/);
+});
+
 test("dark editorial stylesheet is generated with required tokens", () => {
   const css = html("public/css/style.css");
   assert.match(css, /--color-bg: #0d1117;/);

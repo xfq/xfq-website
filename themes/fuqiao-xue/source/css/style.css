@@ -22,9 +22,16 @@
   --color-muted: #93a4b8;
   --color-accent: #64d2c8;
   --color-accent-strong: #9ae6df;
+  --color-code-comment: #8b949e;
+  --color-code-keyword: #ff7b72;
+  --color-code-selector: #d2a8ff;
+  --color-code-name: #7ee787;
+  --color-code-attribute: #79c0ff;
+  --color-code-string: #a5d6ff;
+  --color-code-number: #ffa657;
   --shadow-panel: 0 1.5rem 5rem rgba(0, 0, 0, 0.24);
   --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
-  --font-mono: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+  --font-mono: ui-monospace, "SFMono-Regular", "SF Mono", "Cascadia Code", "JetBrains Mono", Menlo, Monaco, Consolas, "Liberation Mono", monospace;
   --content-width: 70rem;
   --reading-width: 47.5rem;
   --space-page: clamp(1.25rem, 5vw, 3.5rem);
@@ -43,7 +50,7 @@ html {
 }
 
 /* From https://github.com/w3c/clreq/blob/gh-pages/local.css */
-:lang(zh-Hans) {
+html:lang(zh-Hans) {
   text-autospace: normal;
   font-family: 'Punctuation SC', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Ubuntu, Cantarell, 'Helvetica Neue', 'PingFang SC', 'Noto Sans CJK SC', 'Noto Sans SC', 'Heiti SC', 'DengXian', 'Microsoft YaHei', sans-serif;
 }
@@ -370,6 +377,7 @@ p {
   padding: 0.12em 0.3em;
   font-family: var(--font-mono);
   font-size: 0.9em;
+  font-size-adjust: from-font;
 }
 
 .prose__body pre {
@@ -377,13 +385,75 @@ p {
   border: 0.0625rem solid var(--color-border);
   border-radius: 0.5rem;
   background: #080c12;
+  margin: 0;
   padding: 1.125rem;
 }
 
 .prose__body pre code {
   border: 0;
   background: transparent;
+  color: var(--color-text);
   padding: 0;
+}
+
+.prose__body .highlight {
+  forced-color-adjust: none;
+  margin-inline: 0;
+}
+
+.prose__body .highlight table {
+  display: table;
+  overflow: visible;
+  table-layout: fixed;
+  width: 100%;
+}
+
+.prose__body .highlight td {
+  border: 0;
+  padding: 0;
+}
+
+.prose__body .hljs-comment,
+.prose__body .hljs-quote {
+  color: var(--color-code-comment);
+  font-style: italic;
+}
+
+.prose__body .hljs-doctag,
+.prose__body .hljs-keyword,
+.prose__body .hljs-meta {
+  color: var(--color-code-keyword);
+}
+
+.prose__body .hljs-tag,
+.prose__body .hljs-selector-tag,
+.prose__body .hljs-selector-class,
+.prose__body .hljs-selector-id {
+  color: var(--color-code-selector);
+}
+
+.prose__body .hljs-name,
+.prose__body .hljs-built_in,
+.prose__body .hljs-title,
+.prose__body .hljs-type {
+  color: var(--color-code-name);
+}
+
+.prose__body .hljs-attr,
+.prose__body .hljs-attribute,
+.prose__body .hljs-property {
+  color: var(--color-code-attribute);
+}
+
+.prose__body .hljs-string,
+.prose__body .hljs-regexp {
+  color: var(--color-code-string);
+}
+
+.prose__body .hljs-number,
+.prose__body .hljs-literal,
+.prose__body .hljs-symbol {
+  color: var(--color-code-number);
 }
 
 .prose__body blockquote {

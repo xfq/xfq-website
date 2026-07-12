@@ -140,10 +140,11 @@ test("section pages declare the layout and language used by the theme", () => {
   }
 });
 
-test("theme stylesheet applies autospace rules to Chinese language content", () => {
+test("theme stylesheet scopes Chinese typography to the document root", () => {
   const css = read("themes/fuqiao-xue/source/css/style.css");
 
-  assert.match(css, /:lang\(zh-Hans\)\s*{\s*text-autospace: normal;/);
+  assert.match(css, /html:lang\(zh-Hans\)\s*{\s*text-autospace: normal;/);
+  assert.doesNotMatch(css, /(?:^|\n):lang\(zh-Hans\)\s*{/);
 });
 
 test("projects and talks data files support data-driven pages", () => {
