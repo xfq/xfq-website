@@ -20,6 +20,7 @@ const assertNonEmptyString = (value, message) => {
 test("primary content routes exist", () => {
   for (const path of [
     "source/writing/index.md",
+    "source/404.md",
     "source/projects/index.md",
     "source/talks/index.md",
     "source/about/index.md",
@@ -123,6 +124,7 @@ test("post front matter provides complete listing metadata", () => {
 
 test("section pages declare the layout and language used by the theme", () => {
   const pages = [
+    ["source/404.md", "404", "en"],
     ["source/writing/index.md", "writing", "en"],
     ["source/projects/index.md", "projects", "en"],
     ["source/talks/index.md", "talks", "en"],

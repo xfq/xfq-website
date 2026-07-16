@@ -63,7 +63,11 @@ const isoDate = (value) => {
   return date.toISOString().slice(0, 10);
 };
 
-const publicPage = (item) => item && item.published !== false && item.path && item.path.endsWith(".html");
+const publicPage = (item) => item
+  && item.published !== false
+  && item.sitemap !== false
+  && item.path
+  && item.path.endsWith(".html");
 const publicPost = (item) => item && item.published !== false && item.path;
 
 hexo.extend.generator.register("sitemap", function generateSitemap(locals) {

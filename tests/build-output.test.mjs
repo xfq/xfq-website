@@ -69,6 +69,7 @@ before(() => {
 test("generated routes include the primary site sections", () => {
   for (const path of [
     "public/index.html",
+    "public/404.html",
     "public/writing/index.html",
     "public/projects/index.html",
     "public/talks/index.html",
@@ -119,6 +120,7 @@ test("sitemap lists public pages and excludes unpublished posts", () => {
 
   assert.doesNotMatch(sitemap, /i18n-notes/);
   assert.doesNotMatch(sitemap, /working-with-multilingual-technical-knowledge/);
+  assert.doesNotMatch(sitemap, /404(?:\.html|\/)/);
 });
 
 test("llms.txt exposes a Markdown-formatted site guide for LLMs", () => {
@@ -267,7 +269,7 @@ test("published posts expose JSON-LD BlogPosting metadata", () => {
     "An experiment in using an AI-assisted, citation-grounded interface to make W3C Internationalization guidance easier to find."
   );
   assert.match(blogPosting.datePublished, /^2026-06-23T/);
-  assert.deepEqual(blogPosting.keywords, ["i18n", "w3c", "ai"]);
+  assert.deepEqual([...blogPosting.keywords].sort(), ["ai", "i18n", "w3c"]);
   assert.equal(blogPosting.author["@id"], "https://xuefuqiao.com/#person");
   assert.equal(blogPosting.publisher["@id"], "https://xuefuqiao.com/#person");
   assert.equal(blogPosting.mainEntityOfPage["@id"], `${postUrl}#webpage`);
@@ -291,6 +293,19 @@ test("secondary pages render expected content and empty states", () => {
 
   assert.match(html("public/about/index.html"), /leads the W3C Internationalization Activity/);
   assert.match(html("public/zh-Hans/index.html"), /中文内容入口/);
+});
+
+test("404 page provides a branded, accessible recovery path", () => {
+  const notFound = html("public/404.html");
+
+  assert.match(notFound, /<body class="is-not-found">/);
+  assert.match(notFound, /<meta name="robots" content="noindex, follow">/);
+  assert.match(notFound, /<section class="not-found" aria-labelledby="not-found-title">/);
+  assert.match(notFound, /<div class="not-found__field" aria-hidden="true">\s*<span>404<\/span>/);
+  assert.match(notFound, /<h1 id="not-found-title">Page not found\.<\/h1>/);
+  assert.match(notFound, /<nav class="not-found__actions" aria-label="Page recovery">/);
+  assert.match(notFound, /<a href="\/">Return home<\/a>/);
+  assert.match(notFound, /<a href="\/writing\/">Browse writing<\/a>/);
 });
 
 test("unpublished placeholder posts do not generate public detail pages", () => {

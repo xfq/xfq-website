@@ -1,0 +1,16 @@
+<section class="not-found" aria-labelledby="not-found-title">
+  <div class="not-found__field" aria-hidden="true">
+    <span>404</span>
+  </div>
+
+  <div class="not-found__details">
+    <div>
+      <h1 id="not-found-title">Page not found.</h1>
+      <p>The address may have changed or never existed.</p>
+    </div>
+    <nav class="not-found__actions" aria-label="Page recovery">
+      <a href="<%- url_for('/') %>">Return home</a>
+      <a href="<%- url_for('/writing/') %>">Browse writing</a>
+    </nav>
+  </div>
+</section>

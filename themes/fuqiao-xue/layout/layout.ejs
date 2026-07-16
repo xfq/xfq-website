@@ -13,6 +13,9 @@ const canonicalUrl = `${canonicalBase}${canonicalPath}`;
     <meta name="color-scheme" content="dark">
     <title><% if (page.title) { %><%= page.title %> · <% } %><%= config.title %></title>
     <meta name="description" content="<%= page.summary || config.description %>">
+    <%_ if (page.noindex) { _%>
+    <meta name="robots" content="noindex, follow">
+    <%_ } _%>
     <link rel="canonical" href="<%= canonicalUrl %>">
     <!-- Open Graph -->
     <meta property="og:title" content="<%= page.title || config.title %>">
@@ -57,7 +60,7 @@ const canonicalUrl = `${canonicalBase}${canonicalPath}`;
     <link rel="shortcut icon" href="/favicon.ico">
     <%- css('css/style') %>
   </head>
-  <body>
+  <body<%- page.layout === '404' ? ' class="is-not-found"' : '' %>>
     <a class="skip-link" href="#main">Skip to content</a>
     <%- partial('partial/header') %>
     <main id="main" class="site-main" tabindex="-1">

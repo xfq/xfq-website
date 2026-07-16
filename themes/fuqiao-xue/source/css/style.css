@@ -480,6 +480,113 @@ p {
   color: var(--color-muted);
 }
 
+body.is-not-found {
+  display: flex;
+  min-height: 100vh;
+  min-height: 100svh;
+  flex-direction: column;
+  background: var(--color-accent);
+  color: var(--color-bg);
+}
+
+.is-not-found .site-nav,
+.is-not-found .site-footer,
+.not-found__details {
+  border-color: var(--color-panel-strong);
+}
+
+.is-not-found .site-title,
+.is-not-found .site-nav__links a,
+.is-not-found .site-footer,
+.is-not-found .site-footer__links a,
+.not-found h1,
+.not-found__actions a {
+  color: var(--color-bg);
+}
+
+.is-not-found .site-nav__links a:hover,
+.is-not-found .site-footer__links a:hover {
+  color: var(--color-panel-strong);
+}
+
+.is-not-found a:focus-visible {
+  outline-color: var(--color-bg);
+}
+
+.is-not-found .site-main {
+  display: flex;
+  flex: 1;
+  padding-block: 0;
+}
+
+.not-found {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  width: 100%;
+  min-height: 0;
+}
+
+.not-found__field {
+  container: not-found-field / inline-size;
+  display: grid;
+  flex: 1 1 22rem;
+  min-block-size: 20rem;
+  place-items: center;
+  overflow: clip;
+}
+
+.not-found__field span {
+  color: var(--color-bg);
+  font-size: clamp(12rem, 52cqi, 28rem);
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  line-height: 0.75;
+  white-space: nowrap;
+  user-select: none;
+}
+
+.not-found__details {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 1.5rem;
+  border-top: 0.0625rem solid;
+  padding-block: 1.5rem 2rem;
+}
+
+.not-found h1 {
+  font-size: 1.25rem;
+  letter-spacing: -0.02em;
+}
+
+.not-found__details p {
+  margin-top: 0.25rem;
+  color: var(--color-panel-strong);
+  font-size: 0.9375rem;
+}
+
+.not-found__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 1.25rem;
+}
+
+.not-found__actions a {
+  min-block-size: 2.75rem;
+  padding-block: 0.625rem;
+  font-size: 0.9375rem;
+  font-weight: 750;
+  text-underline-offset: 0.3em;
+}
+
+.not-found__actions a:hover {
+  color: var(--color-panel-strong);
+  text-decoration-thickness: 0.125em;
+}
+
 .site-footer {
   display: flex;
   align-items: center;
@@ -526,6 +633,7 @@ p {
   h1 {
     font-size: 3.5rem;
   }
+
 }
 
 @media (max-width: 720px) {
@@ -567,6 +675,26 @@ p {
     align-items: flex-start;
     flex-direction: column;
   }
+
+  .not-found {
+    min-height: 30rem;
+  }
+
+  .not-found__field {
+    flex-basis: 16rem;
+    min-block-size: 14rem;
+  }
+
+  .not-found__details {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 1rem;
+    padding-block: 1.25rem 1.75rem;
+  }
+
+  .not-found__actions {
+    justify-content: flex-start;
+  }
 }
 
 @media (max-width: 360px) {
@@ -593,5 +721,15 @@ p {
 
   .panel {
     box-shadow: none;
+  }
+
+  body.is-not-found {
+    background: Canvas;
+  }
+
+  .is-not-found .site-nav,
+  .is-not-found .site-footer,
+  .not-found__details {
+    border-color: CanvasText;
   }
 }
