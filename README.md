@@ -51,7 +51,7 @@ public/                  Generated site output
 
 - English writing lives in `source/_posts/` with `lang: en`.
 - Primary pages live under `source/`, including `writing`, `projects`, `talks`,
-  `about`, and `zh`.
+  `about`, and `zh-Hans`.
 - Projects and talks are maintained through YAML data files in `source/_data/`.
 - Generated files in `public/` should be rebuilt with `npm run build` instead of
   edited directly.
